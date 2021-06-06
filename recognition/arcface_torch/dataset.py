@@ -105,3 +105,48 @@ class MXFaceDataset(Dataset):
 
     def __len__(self):
         return len(self.imgidx)
+
+class MXCardIDDataset(Dataset):
+    def __init__(self, root_dir, local_rank, imgrec_name, imgidx_name, mean, std):
+        super(MXCardIDDataset, self).__init__()
+        self.mean = mean
+        self.std = std
+        self.transform = transforms.Compose(
+            [transforms.ToPILImage(),
+             transforms.ToTensor(),
+             transforms.Normalize(
+                 mean=self.mean, 
+                 std=self.std),
+             ])
+             
+        self.root_dir = root_dir
+        self.local_rank = local_rank
+
+        path_imgrec = os.path.join(root_dir, imgrec_name)
+        path_imgidx = os.path.join(root_dir, imgidx_name)
+        
+        self.imgrec = mx.recordio.MXIndexedRecordIO(path_imgidx, path_imgrec, 'r')
+        s = self.imgrec.read_idx(0)
+        header, _ = mx.recordio.unpack(s)
+        if header.flag > 0:
+            self.header0 = (int(header.label[0]), int(header.label[1]))
+            self.imgidx = np.array(range(1, int(header.label[0])))
+        else:
+            self.imgidx = np.array(list(self.imgrec.keys))
+
+    def __getitem__(self, index):
+        idx = self.imgidx[index]
+        s = self.imgrec.read_idx(idx)
+        header, img = mx.recordio.unpack(s)
+        label = header.label
+        if not isinstance(label, numbers.Number):
+            label = label[0]
+        label = torch.tensor(label, dtype=torch.long)
+        sample = mx.image.imdecode(img).asnumpy()
+        if self.transform is not None:
+            sample = self.transform(sample)
+        return sample, label
+
+    def __len__(self):
+        return len(self.imgidx)
+

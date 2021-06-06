@@ -12,13 +12,15 @@ from utils.utils_logging import AverageMeter
 
 
 class CallBackVerification(object):
-    def __init__(self, frequent, rank, val_targets, rec_prefix, image_size=(112, 112)):
+    def __init__(self, frequent, rank, val_targets, rec_prefix, mean, std, image_size=(112, 112)):
         self.frequent: int = frequent
         self.rank: int = rank
         self.highest_acc: float = 0.0
         self.highest_acc_list: List[float] = [0.0] * len(val_targets)
         self.ver_list: List[object] = []
         self.ver_name_list: List[str] = []
+        self.mean = mean
+        self.std = std
         if self.rank is 0:
             self.init_dataset(val_targets=val_targets, data_dir=rec_prefix, image_size=image_size)
 
@@ -26,7 +28,8 @@ class CallBackVerification(object):
         results = []
         for i in range(len(self.ver_list)):
             acc1, std1, acc2, std2, xnorm, embeddings_list = verification.test(
-                self.ver_list[i], backbone, 10, 10)
+                self.ver_list[i], backbone, 10, self.mean, self.std, 10)
+          
             logging.info('[%s][%d]XNorm: %f' % (self.ver_name_list[i], global_step, xnorm))
             logging.info('[%s][%d]Accuracy-Flip: %1.5f+-%1.5f' % (self.ver_name_list[i], global_step, acc2, std2))
             if acc2 > self.highest_acc_list[i]:

@@ -1,23 +1,28 @@
 from easydict import EasyDict as edict
 
 config = edict()
-config.dataset = "ms1m-retinaface-t1"
+config.dataset = "card_id_backside"
 config.embedding_size = 512
 config.sample_rate = 1
 config.fp16 = False
 config.momentum = 0.9
 config.weight_decay = 5e-4
-config.batch_size = 64
+config.batch_size = 16
 config.lr = 0.1  # batch size is 512
-config.output = "ms1mv3_arcface_r50"
+config.output = "/mnt/raid5/ngoc/proj/back_side_retrieval/cardid_arcface_r18"
 
 if config.dataset == "emore":
     config.rec = "/train_tmp/faces_emore"
+    config.imgrec_name = "train.rec"
+    config.imgidx_name = "train.idx"
     config.num_classes = 85742
     config.num_image = 5822653
     config.num_epoch = 16
     config.warmup_epoch = -1
     config.val_targets = ["lfw", ]
+    config.image_size = (112, 112)
+    config.MEAN = [0.5, 0.5, 0.5]
+    config.STD = [0.5, 0.5, 0.5]
 
     def lr_step_func(epoch):
         return ((epoch + 1) / (4 + 1)) ** 2 if epoch < -1 else 0.1 ** len(
@@ -26,11 +31,16 @@ if config.dataset == "emore":
 
 elif config.dataset == "ms1m-retinaface-t1":
     config.rec = "/train_tmp/ms1m-retinaface-t1"
+    config.imgrec_name = "train.rec"
+    config.imgidx_name = "train.idx"
     config.num_classes = 93431
     config.num_image = 5179510
     config.num_epoch = 25
     config.warmup_epoch = -1
     config.val_targets = ["lfw", "cfp_fp", "agedb_30"]
+    config.image_size = (112, 112)
+    config.MEAN = [0.5, 0.5, 0.5]
+    config.STD = [0.5, 0.5, 0.5]
 
     def lr_step_func(epoch):
         return ((epoch + 1) / (4 + 1)) ** 2 if epoch < -1 else 0.1 ** len(
@@ -40,10 +50,15 @@ elif config.dataset == "ms1m-retinaface-t1":
 
 elif config.dataset == "ms1m-retinaface-t2":
     config.rec = "/train_tmp/ms1m-retinaface-t2"
+    config.imgrec_name = "train.rec"
+    config.imgidx_name = "train.idx"
     config.num_classes = 91180
     config.num_epoch = 25
     config.warmup_epoch = -1
     config.val_targets = ["lfw", "cfp_fp", "agedb_30"]
+    config.image_size = (112, 112)
+    config.MEAN = [0.5, 0.5, 0.5]
+    config.STD = [0.5, 0.5, 0.5]
 
     def lr_step_func(epoch):
         return ((epoch + 1) / (4 + 1)) ** 2 if epoch < -1 else 0.1 ** len(
@@ -55,11 +70,16 @@ elif config.dataset == "glint360k":
     # our RAM is 256G
     # mount -t tmpfs -o size=140G  tmpfs /train_tmp
     config.rec = "/train_tmp/glint360k"
+    config.imgrec_name = "train.rec"
+    config.imgidx_name = "train.idx"
     config.num_classes = 360232
     config.num_image = 17091657
     config.num_epoch = 20
     config.warmup_epoch = -1
     config.val_targets = ["lfw", "cfp_fp", "agedb_30"]
+    config.image_size = (112, 112)
+    config.MEAN = [0.5, 0.5, 0.5]
+    config.STD = [0.5, 0.5, 0.5]
 
     def lr_step_func(epoch):
         return ((epoch + 1) / (4 + 1)) ** 2 if epoch < config.warmup_epoch else 0.1 ** len(
@@ -68,14 +88,37 @@ elif config.dataset == "glint360k":
 
 elif config.dataset == "webface":
     config.rec = "/train_tmp/faces_webface_112x112"
+    config.imgrec_name = "train.rec"
+    config.imgidx_name = "train.idx"
     config.num_classes = 10572
     config.num_image = "forget"
     config.num_epoch = 34
     config.warmup_epoch = -1
     config.val_targets = ["lfw", "cfp_fp", "agedb_30"]
+    config.image_size = (112, 112)
+    config.MEAN = [0.5, 0.5, 0.5]
+    config.STD = [0.5, 0.5, 0.5]
 
     def lr_step_func(epoch):
         return ((epoch + 1) / (4 + 1)) ** 2 if epoch < config.warmup_epoch else 0.1 ** len(
             [m for m in [20, 28, 32] if m - 1 <= epoch])
+    config.lr_func = lr_step_func
+
+elif config.dataset == "card_id_backside":
+    config.rec = "/mnt/raid5/ngoc/proj/back_side_retrieval/insightface_data"
+    config.imgrec_name = "card_id_backside.rec"
+    config.imgidx_name = "card_id_backside.idx"
+    config.num_classes = 15245
+    config.num_image = 163024
+    config.num_epoch = 1
+    config.warmup_epoch = -1
+    config.val_targets = ["test_card_id_backside_pairs"]
+    config.image_size = (112, 112)
+    config.MEAN = [0.566146620769609, 0.5956634798595636, 0.5774689011936386]
+    config.STD = [0.18610908018726968, 0.1756976967511521, 0.1806499487652534]
+
+    def lr_step_func(epoch):
+        return ((epoch + 1) / (4 + 1)) ** 2 if epoch < -1 else 0.1 ** len(
+            [m for m in [8, 14] if m - 1 <= epoch])
     config.lr_func = lr_step_func
 
