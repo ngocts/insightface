@@ -7,7 +7,7 @@ config.sample_rate = 1
 config.fp16 = False
 config.momentum = 0.9
 config.weight_decay = 5e-4
-config.batch_size = 64
+config.batch_size = 32
 config.lr = 0.1  # batch size is 512
 config.output = "/mnt/raid5/ngoc/proj/back_side_retrieval/cardid_arcface_r50"
 
