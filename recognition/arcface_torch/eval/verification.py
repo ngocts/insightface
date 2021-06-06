@@ -231,7 +231,7 @@ def test(data_set, backbone, batch_size, nfolds=10):
     embeddings_list = []
     time_consumed = 0.0
     t_mean = torch.tensor([0.566146620769609, 0.5956634798595636, 0.5774689011936386])
-    t_std = torch.tensor(0.18610908018726968, 0.1756976967511521, 0.1806499487652534)
+    t_std = torch.tensor([0.18610908018726968, 0.1756976967511521, 0.1806499487652534])
     for i in range(len(data_list)):
         data = data_list[i]
         embeddings = None
