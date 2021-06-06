@@ -94,7 +94,7 @@ def main(args):
     if rank is 0: logging.info("Total Step is: %d" % total_step)
 
     callback_verification = CallBackVerification(2000, rank, cfg.val_targets, cfg.rec, cfg.MEAN, cfg.STD, cfg.image_size)
-    callback_logging = CallBackLogging(50, rank, total_step, cfg.batch_size, world_size, None)
+    callback_logging = CallBackLogging(100, rank, total_step, cfg.batch_size, world_size, None)
     callback_checkpoint = CallBackModelCheckpoint(rank, cfg.output)
 
     loss = AverageMeter()

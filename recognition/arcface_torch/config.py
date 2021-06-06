@@ -7,9 +7,9 @@ config.sample_rate = 1
 config.fp16 = False
 config.momentum = 0.9
 config.weight_decay = 5e-4
-config.batch_size = 16
+config.batch_size = 64
 config.lr = 0.1  # batch size is 512
-config.output = "/mnt/raid5/ngoc/proj/back_side_retrieval/cardid_arcface_r18"
+config.output = "/mnt/raid5/ngoc/proj/back_side_retrieval/cardid_arcface_r50"
 
 if config.dataset == "emore":
     config.rec = "/train_tmp/faces_emore"
@@ -110,7 +110,7 @@ elif config.dataset == "card_id_backside":
     config.imgidx_name = "card_id_backside.idx"
     config.num_classes = 15245
     config.num_image = 163024
-    config.num_epoch = 1
+    config.num_epoch = 25
     config.warmup_epoch = -1
     config.val_targets = ["test_card_id_backside_pairs"]
     config.image_size = (112, 112)
