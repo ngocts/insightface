@@ -230,6 +230,8 @@ def test(data_set, backbone, batch_size, nfolds=10):
     issame_list = data_set[1]
     embeddings_list = []
     time_consumed = 0.0
+    t_mean = torch.tensor([0.566146620769609, 0.5956634798595636, 0.5774689011936386])
+    t_std = torch.tensor(0.18610908018726968, 0.1756976967511521, 0.1806499487652534)
     for i in range(len(data_list)):
         data = data_list[i]
         embeddings = None
@@ -239,7 +241,7 @@ def test(data_set, backbone, batch_size, nfolds=10):
             count = bb - ba
             _data = data[bb - batch_size: bb]
             time0 = datetime.datetime.now()
-            img = ((_data / 255) - 0.5) / 0.5
+            img = ((_data / 255) - t_mean[:, None, None]) / t_std[:, None, None]
             net_out: torch.Tensor = backbone(img)
             _embeddings = net_out.detach().cpu().numpy()
             time_now = datetime.datetime.now()
